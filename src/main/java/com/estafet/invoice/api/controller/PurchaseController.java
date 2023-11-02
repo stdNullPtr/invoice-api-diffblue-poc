@@ -61,8 +61,7 @@ public class PurchaseController {
 
 	@GetMapping("/{id}/invoice")
 	public ResponseEntity<byte[]> getInvoice(@PathVariable Long id) {
-		Purchase purchase = purchaseService.getPurchase(id);
-		byte[] pdfBytes = pdfGeneratorService.generateInvoiceForPurchase(purchase);
+		byte[] pdfBytes = pdfGeneratorService.generateInvoiceForPurchase(id);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_PDF);
