@@ -18,12 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.estafet.invoice.api.model.Purchase;
 import com.estafet.invoice.api.service.PdfGeneratorService;
 import com.estafet.invoice.api.service.PurchaseService;
+import com.itextpdf.text.DocumentException;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/purchases")
+@RequestMapping("/api/purchases")
 public class PurchaseController {
 
 	private final PurchaseService purchaseService;
@@ -59,15 +60,12 @@ public class PurchaseController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/{id}/invoice")
-	public ResponseEntity<byte[]> getInvoice(@PathVariable Long id) {
-		byte[] pdfBytes = pdfGeneratorService.generateInvoiceForPurchase(id);
-
+	@GetMapping("/invoice/{purchaseId}")
+	public ResponseEntity<byte[]> generateInvoiceForPurchase(@PathVariable Long purchaseId) throws DocumentException {
+		byte[] pdfContent = pdfGeneratorService.generateInvoiceForPurchase(purchaseId);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_PDF);
-		String filename = "invoice_" + id + ".pdf";
-		headers.setContentDispositionFormData(filename, filename);
-		headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-		return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+		headers.add("Content-Disposition", "inline; filename=invoice.pdf");
+		return new ResponseEntity<>(pdfContent, headers, HttpStatus.OK);
 	}
 }
