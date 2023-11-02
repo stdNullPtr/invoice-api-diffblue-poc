@@ -10,7 +10,6 @@ import com.estafet.invoice.api.model.Purchase;
 import com.estafet.invoice.api.repository.MerchantRepository;
 import com.estafet.invoice.api.repository.PurchaseRepository;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
