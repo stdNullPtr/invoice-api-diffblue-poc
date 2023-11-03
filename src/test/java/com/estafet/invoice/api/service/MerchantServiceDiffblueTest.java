@@ -71,6 +71,42 @@ class MerchantServiceDiffblueTest {
 	}
 
 	/**
+	 * Method under test: {@link MerchantService#createMerchant(Merchant)}
+	 */
+	@Test
+	void testCreateMerchant3() {
+		Merchant merchant = new Merchant();
+		merchant.setAddress("42 Main St");
+		merchant.setId(1L);
+		merchant.setName("Name");
+		when(merchantRepository.save(Mockito.<Merchant>any())).thenReturn(merchant);
+
+		Merchant merchant2 = new Merchant();
+		merchant2.setAddress("42 Main St");
+		merchant2.setId(1L);
+		merchant2.setName("Name");
+		Merchant actualCreateMerchantResult = merchantService.createMerchant(merchant2);
+		verify(merchantRepository).save(Mockito.<Merchant>any());
+		assertSame(merchant, actualCreateMerchantResult);
+	}
+
+	/**
+	 * Method under test: {@link MerchantService#createMerchant(Merchant)}
+	 */
+	@Test
+	void testCreateMerchant4() {
+		when(merchantRepository.save(Mockito.<Merchant>any()))
+				.thenThrow(new ResourceNotFoundException("An error occurred"));
+
+		Merchant merchant = new Merchant();
+		merchant.setAddress("42 Main St");
+		merchant.setId(1L);
+		merchant.setName("Name");
+		assertThrows(ResourceNotFoundException.class, () -> merchantService.createMerchant(merchant));
+		verify(merchantRepository).save(Mockito.<Merchant>any());
+	}
+
+	/**
 	 * Method under test: {@link MerchantService#getMerchant(Long)}
 	 */
 	@Test
@@ -196,6 +232,57 @@ class MerchantServiceDiffblueTest {
 		merchantDetails.setName("Name");
 		assertThrows(ResourceNotFoundException.class, () -> merchantService.updateMerchant(1L, merchantDetails));
 		verify(merchantRepository).findById(Mockito.<Long>any());
+	}
+
+	/**
+	 * Method under test: {@link MerchantService#updateMerchant(Long, Merchant)}
+	 */
+	@Test
+	void testUpdateMerchant4() {
+		Merchant merchant = new Merchant();
+		merchant.setAddress("42 Main St");
+		merchant.setId(1L);
+		merchant.setName("Name");
+		Optional<Merchant> ofResult = Optional.of(merchant);
+
+		Merchant merchant2 = new Merchant();
+		merchant2.setAddress("42 Main St");
+		merchant2.setId(1L);
+		merchant2.setName("Name");
+		when(merchantRepository.save(Mockito.<Merchant>any())).thenReturn(merchant2);
+		when(merchantRepository.findById(Mockito.<Long>any())).thenReturn(ofResult);
+
+		Merchant merchantDetails = new Merchant();
+		merchantDetails.setAddress("42 Main St");
+		merchantDetails.setId(1L);
+		merchantDetails.setName("Name");
+		Merchant actualUpdateMerchantResult = merchantService.updateMerchant(1L, merchantDetails);
+		verify(merchantRepository).findById(Mockito.<Long>any());
+		verify(merchantRepository).save(Mockito.<Merchant>any());
+		assertSame(merchant2, actualUpdateMerchantResult);
+	}
+
+	/**
+	 * Method under test: {@link MerchantService#updateMerchant(Long, Merchant)}
+	 */
+	@Test
+	void testUpdateMerchant5() {
+		Merchant merchant = new Merchant();
+		merchant.setAddress("42 Main St");
+		merchant.setId(1L);
+		merchant.setName("Name");
+		Optional<Merchant> ofResult = Optional.of(merchant);
+		when(merchantRepository.save(Mockito.<Merchant>any()))
+				.thenThrow(new ResourceNotFoundException("An error occurred"));
+		when(merchantRepository.findById(Mockito.<Long>any())).thenReturn(ofResult);
+
+		Merchant merchantDetails = new Merchant();
+		merchantDetails.setAddress("42 Main St");
+		merchantDetails.setId(1L);
+		merchantDetails.setName("Name");
+		assertThrows(ResourceNotFoundException.class, () -> merchantService.updateMerchant(1L, merchantDetails));
+		verify(merchantRepository).findById(Mockito.<Long>any());
+		verify(merchantRepository).save(Mockito.<Merchant>any());
 	}
 
 	/**
